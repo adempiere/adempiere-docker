@@ -77,14 +77,13 @@ RUN echo "CREATE DATABASE adempiere OWNER adempiere ENCODING 'UNICODE' TEMPLATE 
 RUN cat /data/app/pg_setup.sql
 RUN /etc/init.d/postgresql restart && psql -U postgres < /data/app/pg_setup.sql && cd /data/app/Adempiere/ && ./RUN_silentsetup.sh && cd /data/app/Adempiere/utils/ && ./RUN_ImportAdempiere.sh
 # Expose the PostgreSQL port
-
+USER postgres
+RUN    /etc/init.d/postgresql start 
+EXPOSE 5432
 # Add VOLUMEs to allow backup of config, logs and databases
 VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql" ]
-# Set the default command to run when starting the container
-EXPOSE 5432
-EXPOSE 8080
-EXPOSE 443
-USER postgres
 CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
 USER root
+EXPOSE 8080
+EXPOSE 443
 CMD ["/bin/bash" , "/data/app/Adempiere/utils/RUN_Server2.sh"] 
