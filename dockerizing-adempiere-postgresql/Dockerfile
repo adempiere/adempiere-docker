@@ -76,7 +76,7 @@ RUN echo "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1
 RUN echo "CREATE DATABASE adempiere OWNER adempiere ENCODING 'UNICODE' TEMPLATE template1;"  >> /data/app/pg_setup.sql;
 RUN cat /data/app/pg_setup.sql
 RUN /etc/init.d/postgresql restart && psql -U postgres < /data/app/pg_setup.sql && cd /data/app/Adempiere/ && ./RUN_silentsetup.sh && cd /data/app/Adempiere/utils/ && ./RUN_ImportAdempiere.sh
-RUN echo "/etc/init.d/postgrsql restart" >> /root/.bashrc
+RUN echo "/etc/init.d/postgresql restart" >> /root/.bashrc
 # Expose the PostgreSQL port
 USER postgres
 RUN    /etc/init.d/postgresql start 
