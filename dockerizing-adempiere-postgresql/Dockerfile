@@ -86,4 +86,5 @@ CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main
 USER root
 EXPOSE 8080
 EXPOSE 443
+CMD ["/etc/init.d/postgresql" , "restart"] 
 CMD ["/bin/bash" , "/data/app/Adempiere/utils/RUN_Server2.sh"] 
