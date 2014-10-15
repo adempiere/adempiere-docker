@@ -20,7 +20,7 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" > /etc
 # Install ``python-software-properties``, ``software-properties-common`` and PostgreSQL 9.3
 #  There are some warnings (in red) that show up during the build. You can hide
 #  them by prefixing each apt-get statement with DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y python-software-properties software-properties-common postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3 wget
+RUN apt-get update && apt-get install -y python-software-properties software-properties-common postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3 wget openssh-server
 
 # Note: The official Debian and Ubuntu images automatically ``apt-get clean``
 # after each ``apt-get``
@@ -38,15 +38,23 @@ WORKDIR /data
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 RUN mkdir /data/app
 RUN chmod -R 777 /data/app
+ENV HOST_NAME $(hostname)
+
+RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
 
 RUN wget http://hg.code.sf.net/p/adempiere/code/raw-file/525f6fdbba3a/install/build/Adempiere_380LTS.tar.gz -O /data/app/Adempiere_380LTS.tar.gz
 RUN cd /data/app && tar -zxvf /data/app/Adempiere_380LTS.tar.gz -C /data/app/
 RUN sudo chmod -R 777 /data/app
 RUN sed "s/ADEMPIERE_HOME=C*....Adempiere/ADEMPIERE_HOME=\/data\/app\/Adempiere/g" /data/app/Adempiere/AdempiereEnvTemplate.properties > /data/app/Adempiere/AdempiereEnv.tmp.1
 RUN sed "s/JAVA_HOME=C*..................................../JAVA_HOME=\/usr\/lib\/jvm\/java-7-openjdk-amd64/g" /data/app/Adempiere/AdempiereEnv.tmp.1 > /data/app/Adempiere/AdempiereEnv.tmp.2
-RUN sed "s/ADEMPIERE_KEYSTORE=C*..................................../ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keystore\/myKeystore/g" /data/app/Adempiere/AdempiereEnv.tmp.2 > /data/app/Adempiere/AdempiereEnv.properties
+RUN sed "s/ADEMPIERE_DB_SERVER=localhost/ADEMPIERE_DB_SERVER=$(hostname)/g" /data/app/Adempiere/AdempiereEnv.tmp.2 > /data/app/Adempiere/AdempiereEnv.tmp.3
+RUN sed "s/ADEMPIERE_APPS_SERVER=localhost/ADEMPIERE_DB_SERVER=$(hostname)/g" /data/app/Adempiere/AdempiereEnv.tmp.3 > /data/app/Adempiere/AdempiereEnv.tmp.4
+RUN sed "s/ADEMPIERE_KEYSTORE=C*..................................../ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keystore\/myKeystore/g" /data/app/Adempiere/AdempiereEnv.tmp.4 > /data/app/Adempiere/AdempiereEnv.properties
 ENV ADEMPIERE_HOME /data/app/Adempiere/
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+
 
 # Adjust PostgreSQL configuration so that remote connections to the
 # database are possible. 
