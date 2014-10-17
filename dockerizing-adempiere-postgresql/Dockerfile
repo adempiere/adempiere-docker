@@ -38,7 +38,6 @@ WORKDIR /data
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 RUN mkdir /data/app
 RUN chmod -R 777 /data/app
-ENV HOST_NAME $(hostname)
 
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 EXPOSE 22
@@ -49,9 +48,9 @@ RUN cd /data/app && tar -zxvf /data/app/Adempiere_380LTS.tar.gz -C /data/app/
 RUN sudo chmod -R 777 /data/app
 RUN sed "s/ADEMPIERE_HOME=C*....Adempiere/ADEMPIERE_HOME=\/data\/app\/Adempiere/g" /data/app/Adempiere/AdempiereEnvTemplate.properties > /data/app/Adempiere/AdempiereEnv.tmp.1
 RUN sed "s/JAVA_HOME=C*..................................../JAVA_HOME=\/usr\/lib\/jvm\/java-7-openjdk-amd64/g" /data/app/Adempiere/AdempiereEnv.tmp.1 > /data/app/Adempiere/AdempiereEnv.tmp.2
-RUN sed "s/ADEMPIERE_DB_SERVER=localhost/ADEMPIERE_DB_SERVER=$(hostname)/g" /data/app/Adempiere/AdempiereEnv.tmp.2 > /data/app/Adempiere/AdempiereEnv.tmp.3
-RUN sed "s/ADEMPIERE_APPS_SERVER=localhost/ADEMPIERE_DB_SERVER=$(hostname)/g" /data/app/Adempiere/AdempiereEnv.tmp.3 > /data/app/Adempiere/AdempiereEnv.tmp.4
-RUN sed "s/ADEMPIERE_KEYSTORE=C*..................................../ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keystore\/myKeystore/g" /data/app/Adempiere/AdempiereEnv.tmp.4 > /data/app/Adempiere/AdempiereEnv.properties
+RUN sed "s/ADEMPIERE_APPS_SERVER=localhost/ADEMPIERE_APPS_SERVER=adempiere-pg/g" /data/app/Adempiere/AdempiereEnv.tmp.2 > /data/app/Adempiere/AdempiereEnv.tmp.3
+RUN sed "s/ADEMPIERE_KEYSTORE=C*..................................../ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keystore\/myKeystore/g" /data/app/Adempiere/AdempiereEnv.tmp.3 > /data/app/Adempiere/AdempiereEnv.properties
+RUN cat /data/app/Adempiere/AdempiereEnv.properties
 ENV ADEMPIERE_HOME /data/app/Adempiere/
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
@@ -61,12 +60,13 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
 RUN sed "s/local   all             postgres                                peer/local   all             postgres                                trust/g" /etc/postgresql/9.3/main/pg_hba.conf > /etc/postgresql/9.3/main/pg_hba.tmp.1 
 RUN sed "s/local   all             all                                     peer/local   all             all                                     trust/g" /etc/postgresql/9.3/main/pg_hba.tmp.1 > /etc/postgresql/9.3/main/pg_hba.tmp.2
-RUN sed "s/host    all             all             127.0.0.1\/32            md5/host    all             all             127.0.0.1\/32            trust/g" /etc/postgresql/9.3/main/pg_hba.tmp.2 > /etc/postgresql/9.3/main/pg_hba.tmp.3
-RUN sed "s/host    all             all             ::1\/128                 md5/host    all             all             ::1\/128                 trust/g" /etc/postgresql/9.3/main/pg_hba.tmp.3 > /etc/postgresql/9.3/main/pg_hba.conf
+RUN sed "s/host    all             all             127.0.0.1\/32            md5/host    all             all             $(hostname -i)\/32            trust/g" /etc/postgresql/9.3/main/pg_hba.tmp.2 > /etc/postgresql/9.3/main/pg_hba.tmp.3
+RUN sed "s/host    all             all             127.0.0.1\/32            md5/host    all             all             127.0.0.1\/32            trust/g" /etc/postgresql/9.3/main/pg_hba.tmp.3 > /etc/postgresql/9.3/main/pg_hba.tmp.4
+RUN sed "s/host    all             all             ::1\/128                 md5/host    all             all             ::1\/128                 trust/g" /etc/postgresql/9.3/main/pg_hba.tmp.4 > /etc/postgresql/9.3/main/pg_hba.conf
 
 RUN echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/9.3/main/pg_hba.conf
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
-RUN echo "host all all 192.168.0.0/24 trust" >> /etc/postgresql/9.3/main/pg_hba.conf
+#RUN echo "host all all $(hostname -i)/24 trust" >> /etc/postgresql/9.3/main/pg_hba.conf
 # And add ``listen_addresses`` to ``/etc/postgresql/9.3/main/postgresql.conf``
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
@@ -84,15 +84,19 @@ RUN echo "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1
 RUN echo "CREATE DATABASE adempiere OWNER adempiere ENCODING 'UNICODE' TEMPLATE template1;"  >> /data/app/pg_setup.sql;
 RUN cat /data/app/pg_setup.sql
 RUN /etc/init.d/postgresql restart && psql -U postgres < /data/app/pg_setup.sql && cd /data/app/Adempiere/ && ./RUN_silentsetup.sh && cd /data/app/Adempiere/utils/ && ./RUN_ImportAdempiere.sh
-RUN echo "/etc/init.d/postgresql restart" >> /root/.bashrc
+RUN echo "#!/bin/bash" >> /data/app/start.sh
+RUN echo "/etc/init.d/postgresql restart" >> /data/app/start.sh
+RUN echo "/data/app/Adempiere/utils/RUN_Server2.sh" >> /data/app/start.sh
+RUN chmod 777 /data/app/start.sh
+RUN cat /data/app/start.sh
 # Expose the PostgreSQL port
 USER postgres
-RUN    /etc/init.d/postgresql start 
+#RUN    /etc/init.d/postgresql start 
 EXPOSE 5432
 # Add VOLUMEs to allow backup of config, logs and databases
 VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql" ]
-CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
+#CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
 USER root
 EXPOSE 80
 EXPOSE 443
-CMD ["/bin/bash" , "/data/app/Adempiere/utils/RUN_Server2.sh"] 
+CMD ["/data/app/start.sh"]
