@@ -51,7 +51,7 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
-RUN wget http://hg.code.sf.net/p/adempiere/code/raw-file/525f6fdbba3a/install/build/Adempiere_380LTS.tar.gz -O /data/app/Adempiere_380LTS.tar.gz
+RUN wget http://dl.bintray.com/adempiere/Official-Repository/Adempiere_380LTS.tar.gz -O /data/app/Adempiere_380LTS.tar.gz
 RUN cd /data/app && tar -zxvf /data/app/Adempiere_380LTS.tar.gz -C /data/app/
 RUN sudo chmod -R 777 /data/app
 RUN sed "s/ADEMPIERE_HOME=C*....Adempiere/ADEMPIERE_HOME=\/data\/app\/Adempiere/g" /data/app/Adempiere/AdempiereEnvTemplate.properties > /data/app/Adempiere/AdempiereEnv.tmp.1
