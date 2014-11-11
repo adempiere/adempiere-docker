@@ -53,7 +53,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 
 RUN wget http://dl.bintray.com/adempiere/Official-Repository/Adempiere_380LTS.tar.gz -O /data/app/Adempiere_380LTS.tar.gz
 RUN cd /data/app && tar -zxvf /data/app/Adempiere_380LTS.tar.gz -C /data/app/
-RUN sudo chmod -R 777 /data/app
+RUN chmod -R 777 /data/app
 RUN sed "s/ADEMPIERE_HOME=C*....Adempiere/ADEMPIERE_HOME=\/data\/app\/Adempiere/g" /data/app/Adempiere/AdempiereEnvTemplate.properties > /data/app/Adempiere/AdempiereEnv.tmp.1
 RUN sed "s/JAVA_HOME=C*..................................../JAVA_HOME=\/usr\/lib\/jvm\/java-7-openjdk-amd64/g" /data/app/Adempiere/AdempiereEnv.tmp.1 > /data/app/Adempiere/AdempiereEnv.tmp.2
 RUN sed "s/ADEMPIERE_APPS_SERVER=localhost/ADEMPIERE_APPS_SERVER=adempiere-pg/g" /data/app/Adempiere/AdempiereEnv.tmp.2 > /data/app/Adempiere/AdempiereEnv.tmp.3
