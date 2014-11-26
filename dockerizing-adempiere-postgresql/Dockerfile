@@ -48,9 +48,6 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
-
 RUN wget http://dl.bintray.com/adempiere/Official-Repository/Adempiere_380LTS.tar.gz -O /data/app/Adempiere_380LTS.tar.gz
 RUN cd /data/app && tar -zxvf /data/app/Adempiere_380LTS.tar.gz -C /data/app/
 RUN chmod -R 777 /data/app
@@ -99,12 +96,14 @@ RUN chmod 777 /data/app/start.sh
 RUN cat /data/app/start.sh
 # Expose the PostgreSQL port
 USER postgres
-#RUN    /etc/init.d/postgresql start 
-EXPOSE 5432
+#RUN    /etc/init.d/postgresql start
 # Add VOLUMEs to allow backup of config, logs and databases
 VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql" ]
 #CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
 USER root
+EXPOSE 22
 EXPOSE 80
 EXPOSE 443
-CMD ["/data/app/start.sh"]
+EXPOSE 5432
+CMD /usr/sbin/sshd -D
+#CMD ["/data/app/start.sh"]

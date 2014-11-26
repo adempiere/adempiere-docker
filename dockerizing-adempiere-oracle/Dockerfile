@@ -81,4 +81,4 @@ RUN chmod 777 /u01/app/start.sh
 RUN cat /u01/app/start.sh
 VOLUME  ["/u01/app/Adempiere"]
 CMD /usr/sbin/sshd -D
-CMD ["/data/app/start.sh"]
+#CMD ["/01/app/start.sh"]
