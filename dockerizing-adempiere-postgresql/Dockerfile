@@ -107,4 +107,3 @@ EXPOSE 80
 EXPOSE 443
 EXPOSE 5432
 CMD /usr/sbin/sshd -D
-CMD /data/app/start.sh
