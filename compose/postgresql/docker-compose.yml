@@ -1,0 +1,41 @@
+#
+# This file is part of Adempiere ERP Bazaar - http://www.adempiere.org
+#
+# Copyright (C) Sergio Ramazzina - Serasoft S.r.l.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
+#
+# Contributors:
+# - Sergio Ramazzina - sergio.ramazzina@serasoft.it
+#
+
+version: '2'
+
+services:
+  postgres-db:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+  adempiere:
+    image: adempiere:390LTS
+    ports:
+      - "9080:9080"
+    restart: always
+    depends_on:
+      - postgres-db
+

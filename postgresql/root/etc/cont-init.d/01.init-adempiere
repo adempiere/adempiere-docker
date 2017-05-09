@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv sh
+
+
+if [ ! -f /data/app/Adempiere/.adempiere_configured ]; then
+        /data/app/wait-for-postgres.sh postgres-db
+        psql -h postgres-db -p 5432 -U postgres postgres < /data/app/pg_setup.sql
+        psql -h postgres-db -p 5432 -U adempiere adempiere < /data/app/Adempiere/data/Adempiere_pg.dmp
+        cd /data/app/Adempiere
+        ./RUN_silentsetup.sh
+	touch /data/app/Adempiere/.adempiere_configured
+fi;
+
+

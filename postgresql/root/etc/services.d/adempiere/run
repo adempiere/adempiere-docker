@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv sh
+
+cd /data/app/Adempiere/utils
+./RUN_Server2.sh
+
