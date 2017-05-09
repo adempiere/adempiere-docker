@@ -19,21 +19,12 @@ The adempiere-docker project follows the structure specified below
 
 ```
 └─ adempiere-docker
-   ├─ dist
    ├─ compose
    |  └─ postgresql
    ├─ postgresql
+   |  └─ dist
    └─ old
 ```
-
-#### dist
-This directory contains the _.tar.gz_ archive of the ADempiere binary release 
-we want to deliver through the container. The name of the archive must be 
-formatted like this
-
-Adempiere&#95;&#60;rel-name&#62;.tar.gz
-
-where _rel-name_ is the identifier of the ADempiere release (es.: 390LTS)
 
 #### compose/postgresql
 
@@ -45,6 +36,16 @@ and the PostgreSQL container.
 This directory contains everything related with the build of the Docker 
 container for PostgreSQL.
 
+#### postgresql/dist
+
+This directory contains the _.tar.gz_ archive of the ADempiere binary release
+we want to deliver through the container. The name of the archive must be
+formatted like this
+
+Adempiere&#95;&#60;rel-name&#62;.tar.gz
+
+where _rel-name_ is the identifier of the ADempiere release (es.: 390LTS)
+
 #### old 
 
 This directories contains the old container files that wil be soon removed from 
@@ -55,10 +56,10 @@ the project but, for the moment, are kept there for reference.
 After the repository has been cloned follow the steps detailed below.
 
 * Copy the archive of the ADempiere distribution you want to deploy in the 
-container in the _dist_ directory (es.: ADempiere_390LTS.tar.gz for current 
+container in the _postgresql/dist_ directory (es.: ADempiere_390LTS.tar.gz for current 
 390 release)
 * Open a terminal window.
-* Go to the adempiere-docker/postgresql directory. 
+* Go to the _adempiere-docker/postgresql_ directory. 
 * From the command prompt, type the following command:
 
 ```
