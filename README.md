@@ -31,7 +31,7 @@ This directory contains the _.tar.gz_ archive of the ADempiere binary release
 we want to deliver through the container. The name of the archive must be 
 formatted like this
 
-Adempiere_<rel-name>.tar.gz
+Adempiere&#95;&#60;rel-name&#62;.tar.gz
 
 where _rel-name_ is the identifier of the ADempiere release (es.: 390LTS)
 
@@ -62,7 +62,7 @@ container in the _dist_ directory (es.: ADempiere_390LTS.tar.gz for current
 * From the command prompt, type the following command:
 
 ```
-adempiere-docker git:(master) docker build --rm -t adempiere:390LTS --build-arg ADEMPIERE_REL=390LTS .
+docker build --rm -t adempiere:390LTS --build-arg ADEMPIERE_REL=390LTS .
 ```
 
 ### Run the ADempiere docker instance
@@ -75,17 +75,15 @@ steps detailed below
 * From the command prompt, type the following command:
 
 ```
-adempiere-docker git:(master) docker-compose up -d
+docker-compose up -d
 ```
 
-This command starts the containers in daemon mode.
+This command starts the services in daemon mode. The current docker-compose.yml is a sample of how to make things work and contains a very basic configuration.
 
-The first time you run the image it will take a considerable aomunt of time because
-ADempiere's tables will be initialized starting from default ADempiere seed. I suggest
-you to keep an eye on how the things are progressing by typing the following command:
+Notice that the first time you run the image, it will take a considerable aomunt of time to start the ADempiere container because of the time to initialize the system starting from default ADempiere seed. This initialization phase is made just the very first time the container runs. I suggest you to keep an eye on how the things are progressing by checking the container's logs. To check container logs, type the following command on a termina window:
 
 ```
-adempiere-docker git:(master) docker-compose logs -f adempiere
+docker-compose logs -f adempiere
 ```
 
 If you're not familiar with docker-compose and how to manage Docker services through docker-compose have a 
