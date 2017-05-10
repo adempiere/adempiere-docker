@@ -13,7 +13,7 @@ with the maintenance of an official image for ADempiere.
 ### What's released so far
 
 * Dockerfile for an ADempiere image that connects to an external Postgresql container instance
-* compose file to start both the ADempiere instance and a PostgreSQL instance for ease of use
+* Dcoker compose file to start both the ADempiere instance and a PostgreSQL instance for ease of use
 
 ### Project's structure
 
