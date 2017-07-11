@@ -35,6 +35,8 @@ services:
     image: adempiere:390LTS
     ports:
       - "9080:9080"
+    environment:
+      - RESTORE_SEED=Y
     restart: always
     depends_on:
       - postgres-db
