@@ -2,4 +2,3 @@
 
 cd /data/app/Adempiere/utils
 ./RUN_Server2.sh
-

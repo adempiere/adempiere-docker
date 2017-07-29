@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv sh
 
-LOAD_SEED=${RESTORE_SEED:-"N"}
+LOAD_SEED=${RESTORE_SEED:-"Y"}
+DROP_DB=${DROP_ADEMPIERE_DB:-"Y"}
+FIRST_TIME=${IS_FIRST_TIME:-"Y"}
 
 if [ "$POSTGRES_PASSWORD" = "" ]; then
 	echo "No password given for Postgres' postgres user. Exiting!"
@@ -9,6 +11,9 @@ if [ "$POSTGRES_PASSWORD" = "" ]; then
 fi;
 
 echo "LOAD_SEED=$LOAD_SEED"
+echo "DROP_DB=$DROP_DB"
+echo "FIRST_TIME=$FIRST_TIME"
+
 # Generate adempiere's user's password
 ADEMPIERE_PASSWD=${ADEMPIERE_PASSWORD:-$(pwgen -s 12 1)}
 
@@ -20,21 +25,32 @@ echo "==========================================================================
 
 
 if [ ! -f /data/app/Adempiere/.adempiere_configured ] && [ ! -f /data/app/Adempiere/.configuration_error ]; then
-        
-        echo "postgres-db:5432:postgres:postgres:$POSTGRES_PASSWORD" > /root/.pgpass && \
-        echo "postgres-db:5432:adempiere:adempiere:ADEMPIERE_PASSWD" >> /root/.pgpass && \
 
-        if [ "$LOAD_SEED" = "Y" ]; then 
-             echo "Create new ADempiere database and load seed...."
-             /data/app/wait-for-postgres.sh postgres-db
-             psql -h postgres-db -p 5432 -U postgres postgres < /data/app/pg_setup.sql
+        echo "postgres-db:5432:postgres:postgres:$POSTGRES_PASSWORD" > /root/.pgpass && \
+				# To fix adempiere password with lastly generated.
+        echo "postgres-db:5432:adempiere:adempiere:adempiere" >> /root/.pgpass && \
+
+				echo "Create new ADempiere database and load seed...."
+				/data/app/wait-for-postgres.sh postgres-db
+				if [ "$DROP_DB" = "Y" ]; then
+					   echo "Drop and recreate database...."
+						 if [ "$FIRST_TIME" = "Y" ]; then
+		 					   echo "Create everything in terms of database structures...."
+		 						 psql -h postgres-db -p 5432 -U postgres postgres < /data/app/pg_setup_firsttime.sql
+		         else
+		             echo "Recreate only adempiere database..."
+								 psql -h postgres-db -p 5432 -U postgres postgres < /data/app/pg_setup_exists.sql
+		         fi;
+        else
+            echo "Doing something else..."
+        fi;
+        if [ "$LOAD_SEED" = "Y" ]; then
+					   echo "Load seed...."
              psql -h postgres-db -p 5432 -U adempiere adempiere < /data/app/Adempiere/data/Adempiere_pg.dmp
-        else 
+        else
             echo "Doing something else..."
         fi;
         cd /data/app/Adempiere
         ./RUN_silentsetup.sh
 	touch /data/app/Adempiere/.adempiere_configured
 fi;
-
-

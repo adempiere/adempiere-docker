@@ -7,23 +7,23 @@
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
-# 
+#
 # Contributors:
 # - Sergio Ramazzina - sergio.ramazzina@serasoft.it
 #
 
 #
-# Dockerfile  to build an ADempiere image that connects to an external 
+# Dockerfile  to build an ADempiere image that connects to an external
 # PostgreSQL database instance
 #
 
@@ -37,12 +37,13 @@ ARG ADEMPIERE_REL
 ENV ADEMPIERE_HOME /data/app/Adempiere
 
 RUN apt-get update && \
-    apt-get install -f -y pwgen git postgresql-client && \ 
+    apt-get install -f -y pwgen git postgresql-client && \
     mkdir -p /data/app && \
     chmod -R 777 /data/app
 
 COPY ./dist/Adempiere_${ADEMPIERE_REL}.tar.gz /data/app
-COPY pg_setup.sql /data/app
+COPY pg_setup_exists.sql /data/app
+COPY pg_setup_firsttime.sql /data/app
 COPY wait-for-postgres.sh /data/app
 
 RUN cd /data/app && \
