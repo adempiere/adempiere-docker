@@ -37,7 +37,7 @@ ARG ADEMPIERE_REL
 ENV ADEMPIERE_HOME /data/app/Adempiere
 
 RUN apt-get update && \
-    apt-get install -f -y git postgresql-client && \ 
+    apt-get install -f -y pwgen git postgresql-client && \ 
     mkdir -p /data/app && \
     chmod -R 777 /data/app
 
