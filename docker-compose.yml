@@ -1,32 +1,20 @@
-version: '2'
-
-
+version: '3'
 services:
-
-  adpg:
-    image: adpg:9.6
-    build:
-      context: .
-      dockerfile: ./postgres/Dockerfile
-
-  adpg-client1:
-    depends_on:
-      - adpg
-    image: adpg-client1
-    container_name: adpgc-client1
-    network_mode: host
+  db:
+    image: postgres:9.6
+    restart: always
     volumes:
-      - /tmp/mnt:/var/lib/postgresql/9.6/main/
-    build:
-      context: ./postgres-db
-      dockerfile: ./Dockerfile
-      args:
-        PG_Port: 5432
-        PG_DBName: adempiere_db
-        PG_AdempierePsw: adempierepsw
-        PG_PGAdminPsw: postgrespsw
-        PG_MaxConnections: 1000
-        PG_Net: 192.168.1.0
-        PG_NetMask: 24
-
-
+      - data:/var/lib/postgresql/data/
+    command: postgres -c config_file=/postgresql/postgresql.conf  
+    ports:
+      - "54321:5432"  
+    environment:
+      - POSTGRES_USER:postgres
+      - POSTGRES_PASSWORD:postgres
+      - PGDATA:/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB:adempiere
+      - POSTGRES_INITDB_ARGS:''
+      - POSTGRES_INITDB_XLOGDIR:''
+volumes:
+  data: {}      
+      
