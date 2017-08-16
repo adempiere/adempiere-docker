@@ -3,11 +3,11 @@ services:
   db:
     image: postgres:9.6
     restart: always
+    container_name: ADEMPIERE_DB_PG_96
     volumes:
       - data:/var/lib/postgresql/data/
-    command: postgres -c config_file=/postgresql/postgresql.conf  
     ports:
-      - "54321:5432"  
+      - "54321:5432"
     environment:
       - POSTGRES_USER:postgres
       - POSTGRES_PASSWORD:postgres
@@ -15,6 +15,46 @@ services:
       - POSTGRES_DB:adempiere
       - POSTGRES_INITDB_ARGS:''
       - POSTGRES_INITDB_XLOGDIR:''
+
+  adempiere-client1:
+    depends_on:
+      - db
+    image: adempiere-client1
+    container_name: adempierec-client1
+    network_mode: host
+    build:
+      context: .
+      dockerfile: ./adempiere-last/Dockerfile
+      args:
+        ADEMPIERE_REL: 390LTS
+        ADEMPIERE_SRC_DIR: ./client1
+        ADEMPIERE_DB_HOST: localhost
+        ADEMPIERE_DB_PORT: 54321
+        ADEMPIERE_DB_NAME: dbadclient1
+        ADEMPIERE_DB_USER: uadclient1
+        ADEMPIERE_DB_PASSWORD: postgres
+        ADEMPIERE_DB_ADMIN_PASSWORD: postgres
+        ADEMPIERE_DB_INIT: Y
+
+  adempiere-client2:
+    depends_on:
+      - db
+    image: adempiere-client2
+    container_name: adempierec-client2
+    network_mode: host
+    build:
+      context: .
+      dockerfile: ./adempiere-last/Dockerfile
+      args:
+        ADEMPIERE_REL: 390LTS
+        ADEMPIERE_SRC_DIR: ./client1
+        ADEMPIERE_DB_HOST: localhost
+        ADEMPIERE_DB_PORT: 54321
+        ADEMPIERE_DB_NAME: dbadclient1
+        ADEMPIERE_DB_USER: uadclient1
+        ADEMPIERE_DB_PASSWORD: postgres
+        ADEMPIERE_DB_ADMIN_PASSWORD: postgres
+        ADEMPIERE_DB_INIT: Y
+
 volumes:
-  data: {}      
-      
+  data: {}
