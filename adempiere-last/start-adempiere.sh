@@ -26,10 +26,10 @@ if [ "$AD_SETED_CONFIGURATION" != "Y" ]; then
   cd /opt/Adempiere
   ./RUN_silentsetup.sh
 
-  if [ "$AD_DB_Init" = "Y" ]; then
+  if [ "$ADEMPIERE_DB_INIT" = "Y" ]; then
     echo "============ INIT DB ============"
     cd /opt/Adempiere/utils
-    ./RUN_InportAdempiere.sh
+    Y|./RUN_ImportAdempiere.sh
   else
     echo "========== NO INIT DB ==========="
   fi
