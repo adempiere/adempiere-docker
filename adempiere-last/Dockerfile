@@ -11,6 +11,7 @@ ARG ADEMPIERE_DB_USER
 ARG ADEMPIERE_DB_PASSWORD
 ARG ADEMPIERE_DB_ADMIN_PASSWORD
 ARG ADEMPIERE_DB_INIT
+ARG ADEMPIERE_WEB_PORT
 
 ENV ADEMPIERE_REL $ADEMPIERE_REL
 ENV ADEMPIERE_SRC_DIR $ADEMPIERE_SRC_DIR
@@ -21,6 +22,7 @@ ENV ADEMPIERE_DB_USER $ADEMPIERE_DB_USER
 ENV ADEMPIERE_DB_PASSWORD $ADEMPIERE_DB_PASSWORD
 ENV ADEMPIERE_DB_ADMIN_PASSWORD $ADEMPIERE_DB_ADMIN_PASSWORD
 ENV ADEMPIERE_DB_INIT $ADEMPIERE_DB_INIT
+ENV ADEMPIERE_WEB_PORT $ADEMPIERE_WEB_PORT
 
 ENV ADEMPIERE_HOME /opt/Adempiere
 ENV AD_DB_Init $AD_DB_Init
@@ -29,6 +31,7 @@ COPY $ADEMPIERE_SRC_DIR/Adempiere_$ADEMPIERE_REL.tar.gz /tmp
 COPY $ADEMPIERE_SRC_DIR/lib /tmp/lib
 COPY $ADEMPIERE_SRC_DIR/packages /tmp/packages
 COPY ./adempiere-last/start-adempiere.sh /root
+COPY ./adempiere-last/define-ad-ctl.sh /root
 
 RUN cd /tmp && \
 tar zxvf /tmp/Adempiere_$ADEMPIERE_REL.tar.gz && \
@@ -50,8 +53,12 @@ sed -i "s/ADEMPIERE_DB_PASSWORD=adempiere/ADEMPIERE_DB_PASSWORD=$ADEMPIERE_DB_PA
 sed -i "s/ADEMPIERE_DB_SYSTEM=postgres/ADEMPIERE_DB_SYSTEM=$ADEMPIERE_DB_ADMIN_PASSWORD/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 
 sed -i "s/ADEMPIERE_KEYSTORE=C*/ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keystore\/myKeystore/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
+sed -i "s/ADEMPIERE_WEB_PORT=8888/ADEMPIERE_WEB_PORT=$ADEMPIERE_WEB_PORT/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 
 JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" && \
+
+chmod +x /root/define-ad-ctl.sh && sync && \
+/root/define-ad-ctl.sh && sync && \
 
 cd /opt/Adempiere && \
 cp AdempiereEnvTemplate.properties AdempiereEnv.properties && \
@@ -64,4 +71,4 @@ apt update && \
 apt install -y postgresql postgresql-contrib
 
 
-CMD /root/start-adempiere.sh
+CMD /root/start-adempiere.sh > /tmp/start-adempiere.log

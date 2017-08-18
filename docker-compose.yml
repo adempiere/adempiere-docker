@@ -34,7 +34,8 @@ services:
         ADEMPIERE_DB_USER: uadclient1
         ADEMPIERE_DB_PASSWORD: postgres
         ADEMPIERE_DB_ADMIN_PASSWORD: postgres
-        ADEMPIERE_DB_INIT: Y
+        ADEMPIERE_DB_INIT: F
+        ADEMPIERE_WEB_PORT: 8273
 
   adempiere-client2:
     depends_on:
@@ -54,7 +55,8 @@ services:
         ADEMPIERE_DB_USER: uadclient1
         ADEMPIERE_DB_PASSWORD: postgres
         ADEMPIERE_DB_ADMIN_PASSWORD: postgres
-        ADEMPIERE_DB_INIT: Y
+        ADEMPIERE_DB_INIT: F
+        ADEMPIERE_WEB_PORT: 8274
 
 volumes:
   data: {}
