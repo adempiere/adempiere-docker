@@ -29,6 +29,8 @@ if [ "$AD_SETED_CONFIGURATION" != "Y" ]; then
   if [ "$ADEMPIERE_DB_INIT" = "Y" ]; then
     echo "============ INIT DB ============"
     cd /opt/Adempiere/utils
+    psql -h $ADEMPIERE_DB_HOST -p $ADEMPIERE_DB_PORT -U postgres -c "DROP ROLE IF EXISTS adempiere"
+    psql -h $ADEMPIERE_DB_HOST -p $ADEMPIERE_DB_PORT -U postgres -c "CREATE ROLE adempiere LOGIN PASSWORD '$ADEMPIERE_DB_PASSWORD'"
     Y|./RUN_ImportAdempiere.sh
   else
     echo "========== NO INIT DB ==========="
