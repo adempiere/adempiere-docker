@@ -22,6 +22,8 @@ services:
     image: adempiere-client1
     container_name: adempierec-client1
     network_mode: host
+    environment:
+      ADEMPIERE_DB_INIT: N
     build:
       context: .
       dockerfile: ./adempiere-last/Dockerfile
@@ -34,29 +36,8 @@ services:
         ADEMPIERE_DB_USER: uadclient1
         ADEMPIERE_DB_PASSWORD: postgres
         ADEMPIERE_DB_ADMIN_PASSWORD: postgres
-        ADEMPIERE_DB_INIT: F
         ADEMPIERE_WEB_PORT: 8273
 
-  adempiere-client2:
-    depends_on:
-      - db
-    image: adempiere-client2
-    container_name: adempierec-client2
-    network_mode: host
-    build:
-      context: .
-      dockerfile: ./adempiere-last/Dockerfile
-      args:
-        ADEMPIERE_REL: 390LTS
-        ADEMPIERE_SRC_DIR: ./client1
-        ADEMPIERE_DB_HOST: localhost
-        ADEMPIERE_DB_PORT: 54321
-        ADEMPIERE_DB_NAME: dbadclient1
-        ADEMPIERE_DB_USER: uadclient1
-        ADEMPIERE_DB_PASSWORD: postgres
-        ADEMPIERE_DB_ADMIN_PASSWORD: postgres
-        ADEMPIERE_DB_INIT: F
-        ADEMPIERE_WEB_PORT: 8274
 
 volumes:
   data: {}
