@@ -34,7 +34,7 @@ fi
 if [ "$ADEMPIERE_DB_INIT" = "Y" ]; then
   if [ "$ALREADY_ADEMPIERE_DB_INIT" = "Y" ]; then
     echo "================================================================================"
-    echo "==                        * * *   WARNING  * * *                              =="
+    echo "==                           * * *   WARNING  * * *                           =="
     echo "== Database already initialized                                               =="
     echo "== Please disable ADEMPIERE_DB_INIT argument in docker-compose.yml file       =="
     echo "== If you want to initialize the database again, first start the container    =="
@@ -42,7 +42,7 @@ if [ "$ADEMPIERE_DB_INIT" = "Y" ]; then
     echo "================================================================================"
   else
     echo "================================================================================"
-    echo "==                      * * *   RESTORING DB  * * *                           =="
+    echo "==               * * *   ADempiere Docker: RESTORING DB  * * *                =="
     echo "================================================================================"
     cd /opt/Adempiere/utils
     psql -h $ADEMPIERE_DB_HOST -p $ADEMPIERE_DB_PORT -U postgres -c "DROP ROLE IF EXISTS adempiere"
@@ -52,7 +52,7 @@ if [ "$ADEMPIERE_DB_INIT" = "Y" ]; then
   fi
 else
   echo "================================================================================"
-  echo "==                      * * *   DB NOT RESTORED  * * *                        =="
+  echo "==  ADempiere Docker: DB not restored                                         =="
   echo "================================================================================"
   ALREADY_ADEMPIERE_DB_INIT=N
 fi
