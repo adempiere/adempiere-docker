@@ -11,6 +11,8 @@
 
 ENV_FILE=/root/AdempiereEnvDocker.properties
 
+export PGPASSWORD=$ADEMPIERE_DB_ADMIN_PASSWORD
+
 if [ -f $ENV_FILE ]; then
   source $ENV_FILE
 fi
