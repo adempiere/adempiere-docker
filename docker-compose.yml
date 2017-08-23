@@ -1,3 +1,19 @@
+#  Copyright (C) 2010-2017, OpenUp S.A. , http://www.openup.com.uy
+#  Copyright (C) 2003-2017, e-Evolution Consultants S.A. , http://www.e-evolution.com
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU Affero General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Affero General Public License for more details.
+#  You should have received a copy of the GNU Affero General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#  Email: raul.capecce@openupsolutions.com, http://openupsolutions.com , http://github.com/rcapecce
+#  Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
+#
+
 version: '3'
 services:
   db:
@@ -16,51 +32,49 @@ services:
       - POSTGRES_INITDB_ARGS:''
       - POSTGRES_INITDB_XLOGDIR:''
 
-  adempiere-client1:
+  adempiere-tenant1:
     depends_on:
       - db
-    image: adempiere-client1
-    container_name: adempierec-client1
+    image: adempiere-tenant1
+    container_name: adempiere-tenant1
     ports:
       - 8273:8888
     environment:
-      ADEMPIERE_DB_INIT: N
+      ADEMPIERE_DB_INIT: Y
     build:
       context: .
       dockerfile: ./adempiere-last/Dockerfile
       args:
         ADEMPIERE_REL: 390LTS
-        ADEMPIERE_SRC_DIR: ./client1
-        ADEMPIERE_DB_HOST: 192.168.1.100
+        ADEMPIERE_SRC_DIR: ./tenant1
+        ADEMPIERE_DB_HOST: 10.10.1.122
         ADEMPIERE_DB_PORT: 54321
-        ADEMPIERE_DB_NAME: dbadclient1
-        ADEMPIERE_DB_USER: uadclient1
+        ADEMPIERE_DB_NAME: dbtenant1
+        ADEMPIERE_DB_USER: usertenant1
         ADEMPIERE_DB_PASSWORD: postgres
         ADEMPIERE_DB_ADMIN_PASSWORD: postgres
 
-  adempiere-client2:
+  adempiere-tenant2:
     depends_on:
       - db
-    image: adempiere-client2
-    container_name: adempierec-client2
+    image: adempiere-tenant2
+    container_name: adempiere-tenant2
     ports:
       - 8274:8888
     environment:
-      ADEMPIERE_DB_INIT: N
+      ADEMPIERE_DB_INIT: Y
     build:
       context: .
       dockerfile: ./adempiere-last/Dockerfile
       args:
         ADEMPIERE_REL: 390LTS
-        ADEMPIERE_SRC_DIR: ./client1
-        ADEMPIERE_DB_HOST: 192.168.1.100
+        ADEMPIERE_SRC_DIR: ./tenant2
+        ADEMPIERE_DB_HOST: 10.10.1.122
         ADEMPIERE_DB_PORT: 54321
-        ADEMPIERE_DB_NAME: dbadclient2
-        ADEMPIERE_DB_USER: uadclient2
+        ADEMPIERE_DB_NAME: dbtenant2
+        ADEMPIERE_DB_USER: usertenant2
         ADEMPIERE_DB_PASSWORD: postgres
         ADEMPIERE_DB_ADMIN_PASSWORD: postgres
-
-
 
 volumes:
   data: {}
