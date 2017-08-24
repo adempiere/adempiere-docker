@@ -120,6 +120,11 @@ After the repository has been cloned follow the steps detailed below.
 * Copy the archive of the ADempiere distribution you want to deploy in the
 container in the _postgresql/dist_ directory (es.: ADempiere_390LTS.tar.gz for current
 390 release)
+```shell
+cd postgresql/dist
+wget https://github.com/adempiere/adempiere/releases/download/3.9.0/Adempiere_390LTS.tar.gz
+cd ..
+```
 * Open a terminal window.
 * Go to the _adempiere-docker/postgresql_ directory.
 * From the command prompt, type the following command:
