@@ -143,7 +143,7 @@ docker-compose up -d
 
 This command starts the services in daemon mode. The current docker-compose.yml is a sample of how to make things work and contains a very basic configuration.
 
-Notice that the first time you run the image, it will take a considerable aomunt of time to start the ADempiere container because of the time to initialize the system starting from default ADempiere seed. This initialization phase is made just the very first time the container runs. I suggest you to keep an eye on how the things are progressing by checking the container's logs. To check container logs, type the following command on a termina window:
+Notice that the first time you run the image, it will take a considerable amount of time to start the ADempiere container because of the time to initialize the system starting from default ADempiere seed. This initialization phase is made just the very first time the container runs. I suggest you to keep an eye on how the things are progressing by checking the container's logs. To check container logs, type the following command on a termina window:
 
 ```
 docker-compose logs -f adempiere
