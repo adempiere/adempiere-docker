@@ -30,6 +30,8 @@ case "\$1" in
     echo "ADempiere CTL"
     echo "Options:"
     echo "--help | -h : Help (this message)"
+    echo "log start: Log the initialization of container, show the setup if it runs too"
+    echo "log webserver: Log activity of ADempiere in the webserver"
   ;;
   "log" | "--log" | "-l")
     case "\$2" in
