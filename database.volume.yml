@@ -1,4 +1,3 @@
-#  Copyright (C) 2010-2017, OpenUp S.A. , http://www.openup.com.uy
 #  Copyright (C) 2003-2017, e-Evolution Consultants S.A. , http://www.e-evolution.com
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -10,16 +9,13 @@
 #  GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#  Email: raul.capecce@openupsolutions.com, http://openupsolutions.com , http://github.com/rcapecce
 #  Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
 
-COMPOSE_PROJECT_NAME=eevolution
-ADEMPIERE_WEB_PORT=8277
-ADEMPIERE_SSL_PORT=4444
-ADEMPIERE_DB_PORT=55432
-ADEMPIERE_VERSION=3.9.0
-ADEMPIERE_DB_PASSWORD=adempiere
-ADEMPIERE_DB_ADMIN_PASSWORD=postgres
-
-# ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
-ADEMPIERE_DB_INIT=Y
+version: '3'
+services:
+  database:
+    volumes:
+      - database:/var/lib/postgresql/data/
+volumes:
+  database:
+    driver: local

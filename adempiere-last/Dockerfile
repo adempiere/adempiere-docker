@@ -1,8 +1,7 @@
 FROM openjdk:8-jdk
-MAINTAINER raul.capecce@openupsolutions.com
+MAINTAINER raul.capecce@openupsolutions.com , victor.perez@e-evolution.com
 
-
-ARG ADEMPIERE_REL
+ARG ADEMPIERE_BINARY
 ARG ADEMPIERE_SRC_DIR
 ARG ADEMPIERE_DB_HOST
 ARG ADEMPIERE_DB_PORT
@@ -12,7 +11,7 @@ ARG ADEMPIERE_DB_PASSWORD
 ARG ADEMPIERE_DB_ADMIN_PASSWORD
 ARG ADEMPIERE_WEB_PORT
 
-ENV ADEMPIERE_REL $ADEMPIERE_REL
+ENV ADEMPIERE_BINARY $ADEMPIERE_BINARY
 ENV ADEMPIERE_SRC_DIR $ADEMPIERE_SRC_DIR
 ENV ADEMPIERE_DB_HOST $ADEMPIERE_DB_HOST
 ENV ADEMPIERE_DB_PORT $ADEMPIERE_DB_PORT
@@ -25,14 +24,14 @@ ENV ADEMPIERE_WEB_PORT $ADEMPIERE_WEB_PORT
 ENV ADEMPIERE_HOME /opt/Adempiere
 ENV AD_DB_Init $AD_DB_Init
 
-COPY $ADEMPIERE_SRC_DIR/Adempiere_$ADEMPIERE_REL.tar.gz /tmp
+COPY $ADEMPIERE_SRC_DIR/$ADEMPIERE_BINARY /tmp
 COPY $ADEMPIERE_SRC_DIR/lib /tmp/lib
 COPY $ADEMPIERE_SRC_DIR/packages /tmp/packages
 COPY ./adempiere-last/start-adempiere.sh /root
 COPY ./adempiere-last/define-ad-ctl.sh /root
 
 RUN cd /tmp && \
-tar zxvf /tmp/Adempiere_$ADEMPIERE_REL.tar.gz && \
+tar zxvf /tmp/$ADEMPIERE_BINARY && \
 mv Adempiere /opt/Adempiere && \
 mv lib /opt/Adempiere/lib && \
 mv packages /opt/Adempiere/packages && \

@@ -76,22 +76,42 @@ The adempiere-docker project follows the structure specified below
 
 ```
 └─ adempiere-docker
-   ├─ docker-compose.yml
+   ├─ .env
+   ├─ database.volume.yml
+   ├─ database.yml    
+   ├─ adempiere.yml
    ├─ adempiere-last
-   ├─ client1
+   ├─ tenant1
    |  ├─ Adempiere_390LTS.tar.gz
    |  ├─ lib
    |  └─ packages
-   └─ client2
+   └─ tenant2
    |  ├─ Adempiere_390LTS.tar.gz
    |  ├─ lib
    |  └─ packages
    ...
-   └─ clientN
+   └─ tenantN
    ...
 ```
+#### .env
 
-#### client1
+This file contains the setting variables to Tenant deployment
+
+```
+COMPOSE_PROJECT_NAME=eevolution
+ADEMPIERE_WEB_PORT=8277
+ADEMPIERE_SSL_PORT=4444
+ADEMPIERE_DB_PORT=55432
+ADEMPIERE_VERSION=3.9.0
+ADEMPIERE_DB_PASSWORD=adempiere
+ADEMPIERE_DB_ADMIN_PASSWORD=postgres
+
+# ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
+ADEMPIERE_DB_INIT=Y 
+
+```
+
+#### tenant1 dierectory
 
 This directory contains the files needed to deploy and start a particular ADempiere instance of a client.
 Here we will find:
@@ -99,54 +119,113 @@ Here we will find:
 * lib: The files to copy to the lib directory on ADempiere (this directory will contain the customization and zkcustomization of ADempiere.
 * packages: The files to copy to the packages directory on ADempiere (this directory will contain the localization of an ADempiere).
 
-### docker-compose.yml
+
+### database.volume.yml
+
+this file will contain the an external database volume 
+
+```
+version: '3'
+services:
+  database:
+    volumes:
+      - database:/var/lib/postgresql/data/
+volumes:
+  database:
+    driver: local
+```
+
+### database.yml
+
+this file will contain the PostgreSQL deployment
+
+```
+version: '3'
+services:
+  database:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - "${ADEMPIERE_DB_PORT}:5432"
+    networks:
+      - custom
+    environment:
+      - POSTGRES_USER:postgres
+      - POSTGRES_PASSWORD:postgres
+      - PGDATA:/var/lib/postgresql/data/pgdata
+      - POSTGRES_INITDB_ARGS:''
+      - POSTGRES_INITDB_XLOGDIR:''
+    networks:
+      custom:
+        external : true     
+```      
+
+
+
+### adempiere.yml
 
 This file will contain the definition of our ADempiere clients.
 For a client we will need to complete the next parametrization.
 
 ```
-  adempiere-client1:  # Name of the ADempiere client for docker
-    depends_on:
-      - db
-    image: adempiere-client1  # Name of the ADempiere client image
-    container_name: adempierec-client1  # Name of the ADempiere client container
+version: '3'
+services:
+  adempiere-tenant:
+    networks:
+      - custom
+    external_links:
+      - database:database
+    image: "${COMPOSE_PROJECT_NAME}" # Name of the instance for docker create based on project name
+    container_name: "${COMPOSE_PROJECT_NAME}" # Name of the ADempiere client container
     ports:
-      - <<port>>:8888  # Port where the web client will be exposed
+      - ${ADEMPIERE_WEB_PORT}:8888 # http port where the web client will be exposed
+      - ${ADEMPIERE_SSL_PORT}:444 # https port where the web client will be exposed
     environment:
-      ADEMPIERE_DB_INIT: N  # ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere Seed
+      ADEMPIERE_DB_INIT: ${ADEMPIERE_DB_INIT} # ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
     build:
       context: .
       dockerfile: ./adempiere-last/Dockerfile
       args:
-        ADEMPIERE_REL: 390LTS
-        ADEMPIERE_SRC_DIR: ./client1  # Directory that contain the ADempiere installer, customization and localization
-        ADEMPIERE_DB_HOST: <<ip adress>>  # Address of the database host
-        ADEMPIERE_DB_PORT: <<port>>  # Port of the database host
-        ADEMPIERE_DB_NAME: <<database name>>
-        ADEMPIERE_DB_USER: <<database user>>
-        ADEMPIERE_DB_PASSWORD: <<password database user>>
-        ADEMPIERE_DB_ADMIN_PASSWORD: <<admin password>>
+        ADEMPIERE_BINARY : ${ADEMPIERE_BINARY}
+        ADEMPIERE_SRC_DIR: "./${COMPOSE_PROJECT_NAME}" # Directory that contain the ADempiere installer, customization and localization
+        ADEMPIERE_DB_HOST: "database"
+        ADEMPIERE_DB_PORT: 5432
+        ADEMPIERE_DB_NAME: "${COMPOSE_PROJECT_NAME}"
+        ADEMPIERE_DB_USER: "${COMPOSE_PROJECT_NAME}"
+        ADEMPIERE_DB_PASSWORD: ${ADEMPIERE_DB_PASSWORD}
+        ADEMPIERE_DB_ADMIN_PASSWORD: ${ADEMPIERE_DB_ADMIN_PASSWORD}
+networks:
+  custom:
+    external: true
 ```
 
 ### Postgres Container
 If you don't have an external database server, You can use the postgres server container defined in this composer. As you will not have a database defined in the container, you can first start the database container to mount it, or you can pass the ADEMPIERE_DB_INIT argument with "Y" to load an ADempiere seed, then you only need to parametrice your ADempiere instances with this database configuration.
 
 ### Usage
-If you already have configured the docker-compose.yml, you only need to start the dockers container, to do this in terminal we will run the next line:
+
+Edit and define the parameters of your instance
+
+.env 
+
+to do this in terminal we will run the next line:
+
 ```
-cd <<directory_of_docker-compose.yml>>
-docker-compose up -d
+./application up -d 
 ```
-This command will build the images defined in the docker-compose.yml, create the containers and start them. The "-d" parameter will launch the process in background.
+
+
+This command will build the images defined in the .env, create the containers and start them. The "-d" parameter will launch the process in background.
 To stop the containers you will run the next command.
 ```
-docker-compose stop
+./application stop
 ```
 Note that in the above command we use the instruction ```stop``` insted of ```down```, this is because the ```down``` instruction delete the containers to, ```stop``` only shutdown them.
 
-If you have a new client, you only need to add this client definition to the docker-compose.yml and start up only this image and container.
+If you have a new tenant, you only need to edit and setting the tenant definition to env. and start up only this image and container.
+
 ```
-docker-compose up -d client3
+./application up -d 
 ```
 
 
@@ -156,4 +235,4 @@ look at the [docker compose documentation](https://docs.docker.com/compose)
 ### Contribution
 
 Contributions are more than welcome. Please log any issue or new feature request in
-adempiere-docker project's repositor
+adempiere-docker project's repository
