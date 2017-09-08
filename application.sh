@@ -16,13 +16,13 @@ BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 # load environment variables
 . .env
 
-if [ $(docker network inspect -f '{{.Name}}' custom) != "custom" ];
+if [ "$(docker network inspect -f '{{.Name}}' custom)" != "custom" ];
 then
     echo "Create custom network"
     docker network create -d bridge custom
 fi
 
-if [ $(docker inspect -f '{{.State.Running}}' postgres96_database_1) = "true" ];
+if [ "$(docker inspect -f '{{.State.Running}}' postgres96_database_1)" = "true" ];
 then
     echo "Database container is running"
 else
