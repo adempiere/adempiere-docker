@@ -16,22 +16,59 @@ BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 # load environment variables
 . .env
 
+export COMPOSE_PROJECT_NAME=$1;
+echo "Instance $COMPOSE_PROJECT_NAME"
+. ./$COMPOSE_PROJECT_NAME/.env
+
+if [ -z "$ADEMPIERE_WEB_PORT" ];
+then
+    echo "ADempiere HTTP port not setting"
+    exit 1
+fi
+
+if [ -z "$ADEMPIERE_SSL_PORT" ];
+then
+    echo "ADempiere HTTPS port not setting"
+    exit 1
+fi
+
+if [ -z "$ADEMPIERE_DB_INIT" ];
+then
+    echo "Initialize Database not setting"
+    exit 1
+fi
+
+if [ -z "$ADEMPIERE_VERSION" ];
+then
+    echo "ADempiere version not setting"
+    exit 1
+fi
+
+export ADEMPIERE_WEB_PORT;
+export ADEMPIERE_SSL_PORT;
+export ADEMPIERE_DB_INIT;
+
+echo "ADempiere HTTP  port: $ADEMPIERE_WEB_PORT"
+echo "ADempiere HTTPS port: $ADEMPIERE_SSL_PORT"
+echo "Initialize Database $ADEMPIERE_DB_INIT"
+
+
 if [ $(docker network inspect -f '{{.Name}}' custom) != "custom" ];
 then
     echo "Create custom network"
     docker network create -d bridge custom
 fi
 
-if [ $(docker inspect -f '{{.State.Running}}' postgres96_database_1) = "true" ];
+if [ ! "$(docker ps -q -f name=postgres96_database_1)" ] ;
 then
-    echo "Database container is running"
-else
     echo "Create Database container"
     docker-compose \
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
-       "$@" \
-       -p postgres96_database_1
+        -p postgres96 \
+        up -d
+else
+  echo "Database container is running"
 fi
 
 # Define Adempiere path and binary
@@ -61,10 +98,13 @@ then
               exit
        fi
     fi
+
     # Execute docker-compose
     docker-compose \
             -f "$BASE_DIR/adempiere.yml" \
-            "$@"
+            -p "$COMPOSE_PROJECT_NAME" \
+            $2 \
+            $3
 else
     echo "Project directory not found for : $COMPOSE_PROJECT_NAME "
 fi
