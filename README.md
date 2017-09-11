@@ -8,7 +8,7 @@ with the maintenance of an official image for ADempiere.
 ## Minimal Docker Requirements
 
 To use this Docker image you must have your Docker engine release number greater
-than or equal to 1.9.
+than or equal to 3.0.
 To check the version of your Docker installation, a terminal window and type the
 following command:
 
@@ -67,13 +67,8 @@ To verify the Docker version you're running on your server look at the _Server V
 
 ### Status
 
-* This project is at a beta stage.
+* This project is at a beta stage for development environments.
 * All the documentation is preliminary and subject to be changed and further improved..
-
-### What's released so far
-
-* Dockerfile for an ADempiere image that connects to an external Postgresql container instance
-* Docker compose file to start both the ADempiere instance and a PostgreSQL instance for ease of use
 
 ### Project's structure
 
@@ -81,73 +76,178 @@ The adempiere-docker project follows the structure specified below
 
 ```
 └─ adempiere-docker
-   ├─ compose
-   |  └─ postgresql
-   ├─ postgresql
-   |  └─ dist
-   └─ old
+   ├─ .env
+   ├─ database.volume.yml
+   ├─ database.yml    
+   ├─ adempiere.yml
+   ├─ adempiere-last
+   ├─ tenant1
+   |  ├─ Adempiere_390LTS.tar.gz
+   |  ├─ lib
+   |  └─ packages
+   └─ tenant2
+   |  ├─ Adempiere_390LTS.tar.gz
+   |  ├─ lib
+   |  └─ packages
+   ...
+   └─ tenantN
+   ...
 ```
+#### .env
 
-#### compose/postgresql
-
-This directory contains the compose file that starts both the ADempiere container
-and the PostgreSQL container.
-
-#### postgresql
-
-This directory contains everything related with the build of the Docker
-container for PostgreSQL.
-
-#### postgresql/dist
-
-This directory contains the _.tar.gz_ archive of the ADempiere binary release
-we want to deliver through the container. The name of the archive must be
-formatted like this
-
-Adempiere&#95;&#60;rel-name&#62;.tar.gz
-
-where _rel-name_ is the identifier of the ADempiere release (es.: 390LTS)
-
-#### old
-
-This directories contains the old container files that wil be soon removed from
-the project but, for the moment, are kept there for reference.
-
-### How to build the image
-
-After the repository has been cloned follow the steps detailed below.
-
-* Copy the archive of the ADempiere distribution you want to deploy in the
-container in the _postgresql/dist_ directory (es.: ADempiere_390LTS.tar.gz for current
-390 release)
-* Open a terminal window.
-* Go to the _adempiere-docker/postgresql_ directory.
-* From the command prompt, type the following command:
+This file contains the setting variables to Tenant deployment
 
 ```
-docker build --rm -t adempiere:390LTS --build-arg ADEMPIERE_REL=390LTS .
-```
-
-### Run the ADempiere docker instance
-
-As soon as the image has been built successfully, you can run the image by following the
-steps detailed below
-
-* Open a terminal window.
-* Go to the adempiere-docker/compose/postgresql directory.
-* From the command prompt, type the following command:
+COMPOSE_PROJECT_NAME=eevolution
+ADEMPIERE_DB_PORT=55432
+ADEMPIERE_DB_PASSWORD=adempiere
+ADEMPIERE_DB_ADMIN_PASSWORD=postgres
 
 ```
-docker-compose up -d
-```
-
-This command starts the services in daemon mode. The current docker-compose.yml is a sample of how to make things work and contains a very basic configuration.
-
-Notice that the first time you run the image, it will take a considerable aomunt of time to start the ADempiere container because of the time to initialize the system starting from default ADempiere seed. This initialization phase is made just the very first time the container runs. I suggest you to keep an eye on how the things are progressing by checking the container's logs. To check container logs, type the following command on a termina window:
+tenant/.env
 
 ```
-docker-compose logs -f adempiere
+ADEMPIERE_WEB_PORT=8277
+ADEMPIERE_SSL_PORT=4444
+ADEMPIERE_VERSION=3.9.0
+# ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
+ADEMPIERE_DB_INIT=Y 
+
 ```
+
+#### tenant dierectory
+
+This directory contains the files needed to deploy and start a particular ADempiere instance of a tenant.
+Here we will find:
+* The Adempiere tar.gz installer,  if not exist then this will be download from the last stable version.
+* lib: The files to copy to the lib directory on ADempiere (this directory will contain the customization and zkcustomization of ADempiere.
+* packages: The files to copy to the packages directory on ADempiere (this directory will contain the localization of an ADempiere).
+
+
+### database.volume.yml
+
+this file will contain the an external database volume 
+
+```
+version: '3'
+services:
+  database:
+    volumes:
+      - database:/var/lib/postgresql/data/
+volumes:
+  database:
+    driver: local
+```
+
+### database.yml
+
+this file will contain the PostgreSQL deployment
+
+```
+version: '3'
+services:
+  database:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - "${ADEMPIERE_DB_PORT}:5432"
+    networks:
+      - custom
+    environment:
+      - POSTGRES_USER:postgres
+      - POSTGRES_PASSWORD:postgres
+      - PGDATA:/var/lib/postgresql/data/pgdata
+      - POSTGRES_INITDB_ARGS:''
+      - POSTGRES_INITDB_XLOGDIR:''
+    networks:
+      custom:
+        external : true     
+```      
+
+
+
+### adempiere.yml
+
+This file will contain the definition of our ADempiere clients.
+For a client we will need to complete the next parametrization.
+
+```
+version: '3'
+services:
+  adempiere-tenant:
+    networks:
+      - custom
+    external_links:
+      - database:database
+    image: "${COMPOSE_PROJECT_NAME}" # Name of the instance for docker create based on project name
+    container_name: "${COMPOSE_PROJECT_NAME}" # Name of the ADempiere client container
+    ports:
+      - ${ADEMPIERE_WEB_PORT}:8888 # http port where the web client will be exposed
+      - ${ADEMPIERE_SSL_PORT}:444 # https port where the web client will be exposed
+    environment:
+      ADEMPIERE_DB_INIT: ${ADEMPIERE_DB_INIT} # ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
+    build:
+      context: .
+      dockerfile: ./adempiere-last/Dockerfile
+      args:
+        ADEMPIERE_BINARY : ${ADEMPIERE_BINARY}
+        ADEMPIERE_SRC_DIR: "./${COMPOSE_PROJECT_NAME}" # Directory that contain the ADempiere installer, customization and localization
+        ADEMPIERE_DB_HOST: "database"
+        ADEMPIERE_DB_PORT: 5432
+        ADEMPIERE_DB_NAME: "${COMPOSE_PROJECT_NAME}"
+        ADEMPIERE_DB_USER: "${COMPOSE_PROJECT_NAME}"
+        ADEMPIERE_DB_PASSWORD: ${ADEMPIERE_DB_PASSWORD}
+        ADEMPIERE_DB_ADMIN_PASSWORD: ${ADEMPIERE_DB_ADMIN_PASSWORD}
+networks:
+  custom:
+    external: true
+```
+
+### Postgres Container
+If you don't have an external database server, You can use the postgres server container defined in this composer. As you will not have a database defined in the container, you can first start the database container to mount it, or you can pass the ADEMPIERE_DB_INIT argument with "Y" to load an ADempiere seed, then you only need to parametrice your ADempiere instances with this database configuration.
+
+### Usage
+
+Edit and define the parameters of your instance
+
+.env 
+./eevolution/.env
+
+to do this in terminal we will run the next line:
+
+note : eevolution is name of your tenant
+
+```
+./application eevolution up -d 
+```
+
+
+This command will build the images defined in the .env, create the containers and start them. The "-d" parameter will launch the process in background.
+To stop the containers you will run the next command.
+```
+./application eevolution stop
+```
+Note that in the above command we use the instruction ```stop``` insted of ```down```, this is because the ```down``` instruction delete the containers to, ```stop``` only shutdown them.
+
+If you have a new tenant, you only need to edit and setting the tenant definition to env. and start up only this image and container.
+
+```
+./application eevolution up -d 
+```
+
+If you need a backup from Database using 
+
+Generate backup : 
+
+```
+./application.sh eevolution exec adempiere-tenant /opt/Adempiere/utils/RUN_DBExport.sh
+```
+Ge backup zip :
+
+```
+./application.sh eevolution exec adempiere-tenant "cat /opt/Adempiere/data/ExpDat.dmp" | gzip > "backup.$(date +%F_%R).gz"
+```
+
 
 If you're not familiar with docker-compose and how to manage Docker services through docker-compose have a
 look at the [docker compose documentation](https://docs.docker.com/compose)
@@ -155,4 +255,4 @@ look at the [docker compose documentation](https://docs.docker.com/compose)
 ### Contribution
 
 Contributions are more than welcome. Please log any issue or new feature request in
-adempiere-docker project's repositor
+adempiere-docker project's repository

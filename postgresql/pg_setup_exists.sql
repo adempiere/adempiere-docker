@@ -1,2 +1,0 @@
-DROP DATABASE adempiere;
-CREATE DATABASE adempiere OWNER adempiere ENCODING 'UNICODE' TEMPLATE template1;
