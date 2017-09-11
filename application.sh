@@ -81,12 +81,12 @@ fi
 if [ "$RUNNING" == "false" ];
 then
 echo "CRITICAL - postgres96_database_1 is not running."
-exit "Starting Database "
+echo "Starting Database"
 docker-compose \
-        -f "$BASE_DIR/database.yml" \
-        -f "$BASE_DIR/database.volume.yml" \
-        -p postgres96 \
-        start
+    -f "$BASE_DIR/database.yml" \
+    -f "$BASE_DIR/database.volume.yml" \
+    -p postgres96 \
+    start
 fi
 
 if [ "$RUNNING" == "true" ];
