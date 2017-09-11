@@ -82,10 +82,12 @@ The adempiere-docker project follows the structure specified below
    ├─ adempiere.yml
    ├─ adempiere-last
    ├─ tenant1
+   |  ├─ .env
    |  ├─ Adempiere_390LTS.tar.gz
    |  ├─ lib
    |  └─ packages
    └─ tenant2
+   |  ├─ .env   
    |  ├─ Adempiere_390LTS.tar.gz
    |  ├─ lib
    |  └─ packages
@@ -245,7 +247,8 @@ Generate backup :
 Ge backup zip :
 
 ```
-./application.sh eevolution exec adempiere-tenant "cat /opt/Adempiere/data/ExpDat.dmp" | gzip > "backup.$(date +%F_%R).gz"
+./application.sh eevolution exec adempiere-tenant "cat /opt/Adempiere/data/ExpDat.dmp" \ 
+| gzip >  "backup.$(date +%F_%R).gz"
 ```
 
 
