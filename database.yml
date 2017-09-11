@@ -18,6 +18,8 @@ services:
     image: postgres:9.6
     ports:
       - "${ADEMPIERE_DB_PORT}:5432"
+    volumes:
+      - ./database:/var/lib/postgresql/data/pgdata
     networks:
       - custom
     environment:
@@ -26,6 +28,10 @@ services:
       - PGDATA:/var/lib/postgresql/data/pgdata
       - POSTGRES_INITDB_ARGS:''
       - POSTGRES_INITDB_XLOGDIR:''
+
+volumes:
+ database:
+  external: true
 
 networks:
   custom:

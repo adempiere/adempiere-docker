@@ -99,13 +99,17 @@ This file contains the setting variables to Tenant deployment
 
 ```
 COMPOSE_PROJECT_NAME=eevolution
-ADEMPIERE_WEB_PORT=8277
-ADEMPIERE_SSL_PORT=4444
 ADEMPIERE_DB_PORT=55432
-ADEMPIERE_VERSION=3.9.0
 ADEMPIERE_DB_PASSWORD=adempiere
 ADEMPIERE_DB_ADMIN_PASSWORD=postgres
 
+```
+tenant/.env
+
+```
+ADEMPIERE_WEB_PORT=8277
+ADEMPIERE_SSL_PORT=4444
+ADEMPIERE_VERSION=3.9.0
 # ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
 ADEMPIERE_DB_INIT=Y 
 
@@ -207,25 +211,28 @@ If you don't have an external database server, You can use the postgres server c
 Edit and define the parameters of your instance
 
 .env 
+./eevolution/.env
 
 to do this in terminal we will run the next line:
 
+note : eevolution is name of your tenant
+
 ```
-./application up -d 
+./application eevolution up -d 
 ```
 
 
 This command will build the images defined in the .env, create the containers and start them. The "-d" parameter will launch the process in background.
 To stop the containers you will run the next command.
 ```
-./application stop
+./application eevolution stop
 ```
 Note that in the above command we use the instruction ```stop``` insted of ```down```, this is because the ```down``` instruction delete the containers to, ```stop``` only shutdown them.
 
 If you have a new tenant, you only need to edit and setting the tenant definition to env. and start up only this image and container.
 
 ```
-./application up -d 
+./application eevolution up -d 
 ```
 
 
