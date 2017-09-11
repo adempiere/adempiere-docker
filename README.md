@@ -120,6 +120,11 @@ After the repository has been cloned follow the steps detailed below.
 * Copy the archive of the ADempiere distribution you want to deploy in the
 container in the _postgresql/dist_ directory (es.: ADempiere_390LTS.tar.gz for current
 390 release)
+```shell
+cd postgresql/dist
+wget https://github.com/adempiere/adempiere/releases/download/3.9.0/Adempiere_390LTS.tar.gz
+cd ..
+```
 * Open a terminal window.
 * Go to the _adempiere-docker/postgresql_ directory.
 * From the command prompt, type the following command:
@@ -143,7 +148,7 @@ docker-compose up -d
 
 This command starts the services in daemon mode. The current docker-compose.yml is a sample of how to make things work and contains a very basic configuration.
 
-Notice that the first time you run the image, it will take a considerable aomunt of time to start the ADempiere container because of the time to initialize the system starting from default ADempiere seed. This initialization phase is made just the very first time the container runs. I suggest you to keep an eye on how the things are progressing by checking the container's logs. To check container logs, type the following command on a termina window:
+Notice that the first time you run the image, it will take a considerable amount of time to start the ADempiere container because of the time to initialize the system starting from default ADempiere seed. This initialization phase is made just the very first time the container runs. I suggest you to keep an eye on how the things are progressing by checking the container's logs. To check container logs, type the following command on a termina window:
 
 ```
 docker-compose logs -f adempiere
