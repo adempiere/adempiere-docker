@@ -95,9 +95,8 @@ then
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
         -p postgres96 \
-        ps
+        config
 fi
-
 
 # Define Adempiere path and binary
 ADEMPIERE_PATH="./$COMPOSE_PROJECT_NAME"
@@ -105,18 +104,16 @@ ADEMPIERE_BINARY=Adempiere_${ADEMPIERE_VERSION//.}"LTS.tar.gz"
 export ADEMPIERE_BINARY;
 URL="https://github.com/adempiere/adempiere/releases/download/"$ADEMPIERE_VERSION"/"$ADEMPIERE_BINARY
 
-echo "Adempiere Path $ADEMPIERE_PATH"
-echo "Adempiere Version $ADEMPIERE_VERSION"
-echo "Adempiere Binary $ADEMPIERE_PATH/$ADEMPIERE_BINARY"
-echo "Download from $URL"
-
-
 if [ -d "$ADEMPIERE_PATH" ]
 then
     if [ -f "$ADEMPIERE_PATH/$ADEMPIERE_BINARY" ]
     then
-        echo "Installed based on $ADEMPIERE_PATH/$ADEMPIERE_BINARY"
+       echo "Installed based on ADempiere $ADEMPIERE_VERSION"
     else
+       echo "Adempiere Path $ADEMPIERE_PATH"
+       echo "Adempiere Version $ADEMPIERE_VERSION"
+       echo "Adempiere Binary $ADEMPIERE_PATH/$ADEMPIERE_BINARY"
+       echo "Download from $URL"
        curl -L $URL > "$ADEMPIERE_PATH/$ADEMPIERE_BINARY"
        if [ -f "$ADEMPIERE_PATH/$ADEMPIERE_BINARY" ]
        then
@@ -128,11 +125,14 @@ then
     fi
 
     # Execute docker-compose
+    echo
     docker-compose \
             -f "$BASE_DIR/adempiere.yml" \
             -p "$COMPOSE_PROJECT_NAME" \
             $2 \
-            $3
+            $3 \
+            $4 \
+            $5
 else
     echo "Project directory not found for : $COMPOSE_PROJECT_NAME "
 fi

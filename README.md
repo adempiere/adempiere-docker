@@ -235,6 +235,19 @@ If you have a new tenant, you only need to edit and setting the tenant definitio
 ./application eevolution up -d 
 ```
 
+If you need a backup from Database using 
+
+Generate backup : 
+
+```
+./application.sh eevolution exec adempiere-tenant /opt/Adempiere/utils/RUN_DBExport.sh
+```
+Ge backup zip :
+
+```
+./application.sh eevolution exec adempiere-tenant "cat /opt/Adempiere/data/ExpDat.dmp" | gzip > "backup.$(date +%F_%R).gz"
+```
+
 
 If you're not familiar with docker-compose and how to manage Docker services through docker-compose have a
 look at the [docker compose documentation](https://docs.docker.com/compose)
