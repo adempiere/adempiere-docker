@@ -53,7 +53,7 @@ echo "ADempiere HTTPS port: $ADEMPIERE_SSL_PORT"
 echo "Initialize Database $ADEMPIERE_DB_INIT"
 
 
-if [ $(docker network inspect -f '{{.Name}}' custom) != "custom" ];
+if [ "$(docker network inspect -f '{{.Name}}' custom)" != "custom" ];
 then
     echo "Create custom network"
     docker network create -d bridge custom
