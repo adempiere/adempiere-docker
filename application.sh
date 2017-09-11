@@ -13,6 +13,14 @@
 
 #!/usr/bin/env bash
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
+
+if [ -z "$1" ];
+then
+    echo "ADempiere instance name, should use application.sh <instance name> up -d "
+    exit 1
+fi
+
+
 # load environment variables
 . .env
 
@@ -59,18 +67,22 @@ then
     docker network create -d bridge custom
 fi
 
-if [ ! "$(docker ps -q -f name=postgres96_database_1)" ] ;
-then
+RUNNING=$(docker inspect --format="{{.State.Running}}" postgres96_database_1 2> /dev/null)
+if [ $? -eq 1 ]; then
+  echo "Dababase container does not exist."
+  if [ "$RUNNING" == "false" ];
+  then
+    echo "CRITICAL - postgres96_database_1 is not running."
+    exit 2
+  else
     echo "Create Database container"
     docker-compose \
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
         -p postgres96 \
         up -d
-else
-  echo "Database container is running"
+  fi
 fi
-
 # Define Adempiere path and binary
 ADEMPIERE_PATH="./$COMPOSE_PROJECT_NAME"
 ADEMPIERE_BINARY=Adempiere_${ADEMPIERE_VERSION//.}"LTS.tar.gz"
