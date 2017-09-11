@@ -1,4 +1,4 @@
-# ADempiere Docker Official Repository
+# ADempiere Docker 1.0.0 Official Repository
 
 [![Join the chat at https://gitter.im/adempiere/adempiere-docker](https://badges.gitter.im/adempiere/adempiere-docker.svg)](https://gitter.im/adempiere/adempiere-docker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -95,19 +95,16 @@ The adempiere-docker project follows the structure specified below
    └─ tenantN
    ...
 ```
-#### .env
+#### .env file
 
 This file contains the setting variables to Tenant deployment
 
 ```
-COMPOSE_PROJECT_NAME=eevolution
 ADEMPIERE_DB_PORT=55432
 ADEMPIERE_DB_PASSWORD=adempiere
 ADEMPIERE_DB_ADMIN_PASSWORD=postgres
-
 ```
 tenant/.env
-
 ```
 ADEMPIERE_WEB_PORT=8277
 ADEMPIERE_SSL_PORT=4444
@@ -150,9 +147,10 @@ version: '3'
 services:
   database:
     image: postgres:9.6
-    restart: always
     ports:
       - "${ADEMPIERE_DB_PORT}:5432"
+    volumes:
+      - ./database:/var/lib/postgresql/data
     networks:
       - custom
     environment:
@@ -161,9 +159,14 @@ services:
       - PGDATA:/var/lib/postgresql/data/pgdata
       - POSTGRES_INITDB_ARGS:''
       - POSTGRES_INITDB_XLOGDIR:''
-    networks:
-      custom:
-        external : true     
+
+volumes:
+ database:
+  external: true
+
+networks:
+  custom:
+    external : true   
 ```      
 
 
@@ -210,14 +213,16 @@ If you don't have an external database server, You can use the postgres server c
 
 ### Usage
 
-Edit and define the parameters of your instance
+Edit and define the parameters for new instance
 
-.env 
-./eevolution/.env
+```
+nano .env 
+nano ./eevolution/.env
+```
 
 to do this in terminal we will run the next line:
 
-note : eevolution is name of your tenant
+note : eevolution is the name for new tenant
 
 ```
 ./application eevolution up -d 
@@ -231,7 +236,7 @@ To stop the containers you will run the next command.
 ```
 Note that in the above command we use the instruction ```stop``` insted of ```down```, this is because the ```down``` instruction delete the containers to, ```stop``` only shutdown them.
 
-If you have a new tenant, you only need to edit and setting the tenant definition to env. and start up only this image and container.
+If you have a new tenant, you only need to edit and setting the tenant definition to tenant/.env file and start up only this image and container.
 
 ```
 ./application eevolution up -d 
