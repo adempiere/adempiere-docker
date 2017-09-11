@@ -1,0 +1,45 @@
+#  Copyright (C) 2010-2017, OpenUp S.A. , http://www.openup.com.uy
+#  Copyright (C) 2003-2017, e-Evolution Consultants S.A. , http://www.e-evolution.com
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#  Email: raul.capecce@openupsolutions.com, http://openupsolutions.com , http://github.com/rcapecce
+#  Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
+#
+
+version: '3'
+services:
+  adempiere-tenant:
+    networks:
+      - custom
+    external_links:
+      - database:database
+    image: "${COMPOSE_PROJECT_NAME}" # Name of the instance for docker create based on project name
+    container_name: "${COMPOSE_PROJECT_NAME}" # Name of the ADempiere client container
+    ports:
+      - ${ADEMPIERE_WEB_PORT}:8888 # http port where the web client will be exposed
+      - ${ADEMPIERE_SSL_PORT}:444 # https port where the web client will be exposed
+    environment:
+      ADEMPIERE_DB_INIT: ${ADEMPIERE_DB_INIT} # ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
+    build:
+      context: .
+      dockerfile: ./adempiere-last/Dockerfile
+      args:
+        ADEMPIERE_BINARY : ${ADEMPIERE_BINARY}
+        ADEMPIERE_SRC_DIR: "./${COMPOSE_PROJECT_NAME}" # Directory that contain the ADempiere installer, customization and localization
+        ADEMPIERE_DB_HOST: "database"
+        ADEMPIERE_DB_PORT: 5432
+        ADEMPIERE_DB_NAME: "${COMPOSE_PROJECT_NAME}"
+        ADEMPIERE_DB_USER: "${COMPOSE_PROJECT_NAME}"
+        ADEMPIERE_DB_PASSWORD: ${ADEMPIERE_DB_PASSWORD}
+        ADEMPIERE_DB_ADMIN_PASSWORD: ${ADEMPIERE_DB_ADMIN_PASSWORD}
+networks:
+  custom:
+    external: true
