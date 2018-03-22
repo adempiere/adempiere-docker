@@ -225,21 +225,21 @@ to do this in terminal we will run the next line:
 note : eevolution is the name for new tenant
 
 ```
-./application eevolution up -d 
+./application.sh eevolution up -d 
 ```
 
 
 This command will build the images defined in the .env, create the containers and start them. The "-d" parameter will launch the process in background.
 To stop the containers you will run the next command.
 ```
-./application eevolution stop
+./application.sh eevolution stop
 ```
 Note that in the above command we use the instruction ```stop``` insted of ```down```, this is because the ```down``` instruction delete the containers to, ```stop``` only shutdown them.
 
 If you have a new tenant, you only need to edit and setting the tenant definition to tenant/.env file and start up only this image and container.
 
 ```
-./application eevolution up -d 
+./application.sh eevolution up -d 
 ```
 
 If you need a backup from Database using 
