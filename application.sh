@@ -67,25 +67,25 @@ then
     docker network create -d bridge custom
 fi
 
-RUNNING=$(docker inspect --format="{{.State.Running}}" postgres96_database_1 2> /dev/null)
+RUNNING=$(docker inspect --format="{{.State.Running}}" postgres_database_1 2> /dev/null)
 if [ $? -eq 1 ]; then
   echo "Dababase container does not exist."
   echo "Create Database container"
     docker-compose \
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
-        -p postgres96 \
+        -p postgres \
         up -d
 fi
 
 if [ "$RUNNING" == "false" ];
 then
-echo "CRITICAL - postgres96_database_1 is not running."
+echo "CRITICAL - postgres_database_1 is not running."
 echo "Starting Database"
 docker-compose \
     -f "$BASE_DIR/database.yml" \
     -f "$BASE_DIR/database.volume.yml" \
-    -p postgres96 \
+    -p postgres \
     start
 fi
 
@@ -94,7 +94,7 @@ then
    docker-compose \
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
-        -p postgres96 \
+        -p postgres \
         config
 fi
 
