@@ -15,7 +15,7 @@
 version: '3'
 services:
   database:
-    image: postgres:10.3
+    image: postgres:11.1
     ports:
       - "${ADEMPIERE_DB_PORT}:5432"
     volumes:

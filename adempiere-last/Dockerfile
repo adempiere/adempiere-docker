@@ -66,7 +66,7 @@ chmod 755 /root/start-adempiere.sh && \
 
 
 apt update && \
-apt install -y postgresql postgresql-contrib
+apt install -y postgresql-client postgresql-contrib
 
 
 CMD /root/start-adempiere.sh > /tmp/start-adempiere.log
