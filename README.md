@@ -1,4 +1,4 @@
-# ADempiere Docker 1.0.0 Official Repository
+# ADempiere Docker 2.0.0 Official Repository
 
 [![Join the chat at https://gitter.im/adempiere/adempiere-docker](https://badges.gitter.im/adempiere/adempiere-docker.svg)](https://gitter.im/adempiere/adempiere-docker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -83,12 +83,12 @@ The adempiere-docker project follows the structure specified below
    ├─ adempiere-last
    ├─ tenant1
    |  ├─ .env
-   |  ├─ Adempiere_390LTS.tar.gz
+   |  ├─ Adempiere_391LTS.tar.gz
    |  ├─ lib
    |  └─ packages
    └─ tenant2
    |  ├─ .env   
-   |  ├─ Adempiere_390LTS.tar.gz
+   |  ├─ Adempiere_391LTS.tar.gz
    |  ├─ lib
    |  └─ packages
    ...
@@ -108,7 +108,7 @@ tenant/.env
 ```
 ADEMPIERE_WEB_PORT=8277
 ADEMPIERE_SSL_PORT=4444
-ADEMPIERE_VERSION=3.9.0
+ADEMPIERE_VERSION=3.9.1
 # ATENTION If is "Y" it will be replace de actual defined database with a empty ADempiere seed
 ADEMPIERE_DB_INIT=Y 
 
@@ -146,7 +146,7 @@ this file will contain the PostgreSQL deployment
 version: '3'
 services:
   database:
-    image: postgres:9.6
+    image: postgres:11.1
     ports:
       - "${ADEMPIERE_DB_PORT}:5432"
     volumes:
