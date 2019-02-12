@@ -128,7 +128,7 @@ Here we will find:
 this file will contain the an external database volume 
 
 ```
-version: '3'
+version: '2.0'
 services:
   database:
     volumes:
@@ -143,7 +143,7 @@ volumes:
 this file will contain the PostgreSQL deployment
 
 ```
-version: '3'
+version: '2.0'
 services:
   database:
     image: postgres:11.1
@@ -177,7 +177,7 @@ This file will contain the definition of our ADempiere clients.
 For a client we will need to complete the next parametrization.
 
 ```
-version: '3'
+version: '2.0'
 services:
   adempiere-tenant:
     networks:
