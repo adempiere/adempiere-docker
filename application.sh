@@ -74,7 +74,7 @@ if [ $? -eq 1 ]; then
     docker-compose \
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
-        -p postgres \
+        -p postgres${PG_VERSION}  \
         up -d
 fi
 
@@ -85,7 +85,7 @@ echo "Starting Database"
 docker-compose \
     -f "$BASE_DIR/database.yml" \
     -f "$BASE_DIR/database.volume.yml" \
-    -p postgres \
+    -p postgres${PG_VERSION}  \
     start
 fi
 
@@ -94,7 +94,7 @@ then
    docker-compose \
         -f "$BASE_DIR/database.yml" \
         -f "$BASE_DIR/database.volume.yml" \
-        -p postgres \
+        -p postgres${PG_VERSION} \
         config
 fi
 

@@ -39,7 +39,7 @@ chmod -Rf 755 /opt/Adempiere/*.sh && \
 chmod -Rf 755 /opt/Adempiere/utils/*.sh && \
 
 sed -i "s/ADEMPIERE_HOME=C.*/ADEMPIERE_HOME=\/opt\/Adempiere/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
-sed -i "s/JAVA_HOME=C.*/JAVA_HOME=\/usr\/lib\/jvm\/java-8-openjdk-amd64/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
+sed -i "s/JAVA_HOME=C.*/JAVA_HOME=\/usr\/local\/openjdk-8/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 sed -i "s/ADEMPIERE_JAVA_OPTIONS=-Xms64M -Xmx512M/ADEMPIERE_JAVA_OPTIONS=-Xms1024M -Xmx4096M/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 
 sed -i "s/ADEMPIERE_DB_SERVER=localhost/ADEMPIERE_DB_SERVER=$ADEMPIERE_DB_HOST/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \

@@ -15,11 +15,11 @@
 version: '2.0'
 services:
   database:
-    image: postgres:11.1
+    image: postgres:${PG_VERSION}
     ports:
       - "${ADEMPIERE_DB_PORT}:5432"
     volumes:
-      - database:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/11.2/data
     networks:
       - custom
     environment:
