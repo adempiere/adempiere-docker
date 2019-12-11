@@ -53,7 +53,7 @@ sed -i "s/ADEMPIERE_KEYSTORE=C*/ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keyst
 
 sed -i "s/ADEMPIERE_WEB_ALIAS=localhost/ADEMPIERE_DB_SYSTEM=$(hostname)/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 
-JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" && \
+JAVA_HOME="/usr/local/openjdk-8" && \
 
 chmod +x /root/define-ad-ctl.sh && sync && \
 /root/define-ad-ctl.sh && sync && \

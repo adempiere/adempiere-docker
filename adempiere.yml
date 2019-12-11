@@ -12,9 +12,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #  Email: raul.capecce@openupsolutions.com, http://openupsolutions.com , http://github.com/rcapecce
 #  Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
-#
-
-version: '2.0'
+version: '2'
 services:
   adempiere-tenant:
     networks:
