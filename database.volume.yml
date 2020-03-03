@@ -11,11 +11,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #  Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
 
-version: '2.0'
+version: '3.5'
 services:
-  database:
+  db:
     volumes:
-      - database:/var/lib/postgresql/data/
+      - db:/var/lib/postgresql/data/
 volumes:
-  database:
+  db:
     driver: local

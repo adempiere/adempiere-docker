@@ -12,13 +12,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #  Email: raul.capecce@openupsolutions.com, http://openupsolutions.com , http://github.com/rcapecce
 #  Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
-version: '2'
+version: '3.5'
 services:
   adempiere-tenant:
     networks:
       - custom
     external_links:
-      - database:database
+      - db:db
     image: "${COMPOSE_PROJECT_NAME}" # Name of the instance for docker create based on project name
     container_name: "${COMPOSE_PROJECT_NAME}" # Name of the ADempiere client container
     ports:
@@ -32,7 +32,7 @@ services:
       args:
         ADEMPIERE_BINARY : ${ADEMPIERE_BINARY}
         ADEMPIERE_SRC_DIR: "./${COMPOSE_PROJECT_NAME}" # Directory that contain the ADempiere installer, customization and localization
-        ADEMPIERE_DB_HOST: "database"
+        ADEMPIERE_DB_HOST: "db"
         ADEMPIERE_DB_PORT: 5432
         ADEMPIERE_DB_NAME: "${COMPOSE_PROJECT_NAME}"
         ADEMPIERE_DB_USER: "${COMPOSE_PROJECT_NAME}"
