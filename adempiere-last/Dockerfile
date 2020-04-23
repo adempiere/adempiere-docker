@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM adoptopenjdk/openjdk8:x86_64-debianslim-jdk8u-nightly
 MAINTAINER raul.capecce@openupsolutions.com , victor.perez@e-evolution.com
 
 ARG ADEMPIERE_BINARY
@@ -39,7 +39,7 @@ chmod -Rf 755 /opt/Adempiere/*.sh && \
 chmod -Rf 755 /opt/Adempiere/utils/*.sh && \
 
 sed -i "s/ADEMPIERE_HOME=C.*/ADEMPIERE_HOME=\/opt\/Adempiere/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
-sed -i "s/JAVA_HOME=C.*/JAVA_HOME=\/usr\/local\/openjdk-8/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
+sed -i "s/JAVA_HOME=C.*/JAVA_HOME=\/opt\/java\/openjdk/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 sed -i "s/ADEMPIERE_JAVA_OPTIONS=-Xms64M -Xmx512M/ADEMPIERE_JAVA_OPTIONS=-Xms1024M -Xmx4096M/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 
 sed -i "s/ADEMPIERE_DB_SERVER=localhost/ADEMPIERE_DB_SERVER=$ADEMPIERE_DB_HOST/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
@@ -53,7 +53,7 @@ sed -i "s/ADEMPIERE_KEYSTORE=C*/ADEMPIERE_KEYSTORE=\/data\/app\/Adempiere\/keyst
 
 sed -i "s/ADEMPIERE_WEB_ALIAS=localhost/ADEMPIERE_DB_SYSTEM=$(hostname)/g" /opt/Adempiere/AdempiereEnvTemplate.properties && \
 
-JAVA_HOME="/usr/local/openjdk-8" && \
+JAVA_HOME="/opt/java/openjdk" && \
 
 chmod +x /root/define-ad-ctl.sh && sync && \
 /root/define-ad-ctl.sh && sync && \
