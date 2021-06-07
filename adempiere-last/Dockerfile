@@ -25,8 +25,7 @@ ENV ADEMPIERE_HOME /opt/Adempiere
 ENV AD_DB_Init $AD_DB_Init
 
 COPY $ADEMPIERE_SRC_DIR/$ADEMPIERE_BINARY /tmp
-COPY $ADEMPIERE_SRC_DIR/lib/customization.jar /tmp/lib
-COPY $ADEMPIERE_SRC_DIR/lib/zkcustomization.jar /tmp/lib
+COPY $ADEMPIERE_SRC_DIR/lib/ /tmp/lib
 COPY $ADEMPIERE_SRC_DIR/migration/ /tmp/migration
 COPY $ADEMPIERE_SRC_DIR/packages /tmp/packages
 COPY ./adempiere-last/start-adempiere.sh /root
@@ -35,8 +34,9 @@ COPY ./adempiere-last/define-ad-ctl.sh /root
 RUN cd /tmp && \
 tar zxvf /tmp/$ADEMPIERE_BINARY && \
 mv Adempiere /opt/Adempiere && \
-mv lib /opt/Adempiere/lib && \
-mv packages /opt/Adempiere/packages && \
+mv /tmp/lib /opt/Adempiere/lib && \
+mv /tmp/packages /opt/Adempiere/packages && \
+mv /tmp/migration /opt/Adempiere/migration && \
 chmod -Rf 755 /opt/Adempiere/*.sh && \
 chmod -Rf 755 /opt/Adempiere/utils/*.sh && \
 
