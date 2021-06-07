@@ -1,2 +1,6 @@
 postgresql/dist/Adempiere*
-
+wilbar/*
+wilbar
+eevolution/migration/ZWG_0.1
+*.tar.gz
+*.iml
