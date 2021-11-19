@@ -32,7 +32,7 @@ services:
       args:
         ADEMPIERE_BINARY : ${ADEMPIERE_BINARY}
         ADEMPIERE_SRC_DIR: "./${COMPOSE_PROJECT_NAME}" # Directory that contain the ADempiere installer, customization and localization
-        ADEMPIERE_DB_HOST: "db"
+        ADEMPIERE_DB_HOST: "${ADEMPIERE_DB_SERVER}"
         ADEMPIERE_DB_PORT: 5432
         ADEMPIERE_DB_NAME: "${COMPOSE_PROJECT_NAME}"
         ADEMPIERE_DB_USER: "${COMPOSE_PROJECT_NAME}"

@@ -67,7 +67,7 @@ then
     docker network create -d bridge custom
 fi
 
-RUNNING=$(docker inspect --format="{{.State.Running}}" postgres${PG_VERSION}_database_1 2> /dev/null)
+RUNNING=$(docker inspect --format="{{.State.Running}}" postgres${PG_VERSION//.}_db_1 2> /dev/null)
 if [ $? -eq 1 ]; then
   echo "Dababase container does not exist."
   echo "Create Database container"
@@ -80,7 +80,7 @@ fi
 
 if [ "$RUNNING" == "false" ];
 then
-echo "CRITICAL - postgres${PG_VERSION}_database_1 is not running."
+echo "CRITICAL - postgres${PG_VERSION//.}_db_1 is not running."
 echo "Starting Database"
 docker-compose \
     -f "$BASE_DIR/database.yml" \
@@ -98,10 +98,14 @@ then
         config
 fi
 
+export DB_CONTAINER_ID=$(docker inspect --format="{{.Id}}" postgres${PG_VERSION//.}_db_1)
 # Define Adempiere path and binary
+export ADEMPIERE_DB_SERVER=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER_ID)
+echo "Database Host: $ADEMPIERE_DB_SERVER"
 ADEMPIERE_PATH="./$COMPOSE_PROJECT_NAME"
 ADEMPIERE_BINARY=Adempiere_${ADEMPIERE_VERSION//.}"LTS.tar.gz"
 export ADEMPIERE_BINARY;
+export ADEMPIERE_DB_SERVER;
 URL="https://github.com/adempiere/adempiere/releases/download/"$ADEMPIERE_VERSION"/"$ADEMPIERE_BINARY
 
 if [ -d "$ADEMPIERE_PATH" ]

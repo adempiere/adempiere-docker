@@ -1,4 +1,4 @@
-# ADempiere Docker 2.0.0 Official Repository
+# ADempiere Docker 3.0.0 Official Repository
 
 [![Join the chat at https://gitter.im/adempiere/adempiere-docker](https://badges.gitter.im/adempiere/adempiere-docker.svg)](https://gitter.im/adempiere/adempiere-docker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 

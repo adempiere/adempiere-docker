@@ -25,10 +25,8 @@ done
 
 # Run Setup if it hasn't been runned
 if [ "$AD_SETED_CONFIGURATION" != "Y" ]; then
-
   cd /opt/Adempiere
   ./RUN_silentsetup.sh
-
   AD_SETED_CONFIGURATION=Y
 fi
 
@@ -49,7 +47,7 @@ if [ "$ADEMPIERE_DB_INIT" = "Y" ]; then
     cd /opt/Adempiere/utils
     psql -h $ADEMPIERE_DB_HOST -p $ADEMPIERE_DB_PORT -U postgres -c "DROP ROLE IF EXISTS adempiere"
     psql -h $ADEMPIERE_DB_HOST -p $ADEMPIERE_DB_PORT -U postgres -c "CREATE ROLE adempiere LOGIN PASSWORD '$ADEMPIERE_DB_PASSWORD'"
-    Y|./RUN_ImportAdempiere.sh
+    ./RUN_ImportAdempiere.sh silent
     ALREADY_ADEMPIERE_DB_INIT=Y
   fi
 else
@@ -66,6 +64,7 @@ echo "ALREADY_ADEMPIERE_DB_INIT=$ALREADY_ADEMPIERE_DB_INIT" >> $ENV_FILE
 
 
 cd /opt/Adempiere/utils
+chmod 755 *.sh 
 ./RUN_Server2.sh
 tail -f /dev/null
 
