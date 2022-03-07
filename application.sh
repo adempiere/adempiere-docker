@@ -67,7 +67,7 @@ then
     docker network create -d bridge custom
 fi
 
-RUNNING=$(docker inspect --format="{{.State.Running}}" postgres${PG_VERSION//.}_db_1 2> /dev/null)
+RUNNING=$(docker inspect --format="{{.State.Running}}" postgres${PG_VERSION//.}-db-1 2> /dev/null)
 if [ $? -eq 1 ]; then
   echo "Dababase container does not exist."
   echo "Create Database container"
@@ -98,7 +98,7 @@ then
         config
 fi
 
-export DB_CONTAINER_ID=$(docker inspect --format="{{.Id}}" postgres${PG_VERSION//.}_db_1)
+export DB_CONTAINER_ID=$(docker inspect --format="{{.Id}}" postgres${PG_VERSION//.}-db-1)
 # Define Adempiere path and binary
 export ADEMPIERE_DB_SERVER=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DB_CONTAINER_ID)
 echo "Database Host: $ADEMPIERE_DB_SERVER"
